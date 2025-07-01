@@ -1,22 +1,36 @@
+# Core ML libraries - compatible versions
 diffusers==0.28.0
 transformers==4.41.1
-gradio==4.31.5
-bitsandbytes==0.43.1
 accelerate==0.30.1
-protobuf==3.20
-opencv-python
-tensorboardX
+torch==2.3.0
+torchvision==0.18.0
+
+# Gradio and web interface
+gradio==4.31.5
+gradio_client==0.15.0
+
+# Hugging Face ecosystem
+huggingface_hub==0.25.0
 safetensors
+
+# Image processing
+opencv-python
 pillow
 einops
-torch
-peft
+
+# Optimization and quantization
+bitsandbytes==0.43.1
 xformers
+
+# Additional utilities
+peft
 onnxruntime
 av
-torchvision
+tensorboardX
 
-huggingface_hub==0.25.0
-gradio_client==0.16.4
+# FastAPI and dependencies (for Gradio compatibility)
 fastapi==0.110.0
 pydantic==2.6.4
+
+# Protobuf (pinned for compatibility)
+protobuf==3.20.0
