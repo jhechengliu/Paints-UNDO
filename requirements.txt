@@ -15,3 +15,4 @@ xformers
 onnxruntime
 av
 torchvision
+huggingface_hub==0.19.4
