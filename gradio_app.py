@@ -497,4 +497,23 @@ with block:
         examples_per_page=1024
     )
 
-block.queue().launch(server_name='0.0.0.0', share=True, show_error=True)
+print("=== DEBUGGING GRADIO APP CREATION ===")
+try:
+    print("1. Creating Gradio block...")
+    demo = block.queue()
+    print("   ✓ Gradio block created successfully")
+except Exception as e:
+    print(f"   ✗ Gradio block creation failed: {e}")
+    traceback.print_exc()
+    exit(1)
+
+try:
+    print("2. Launching Gradio app...")
+    demo.launch(server_name='0.0.0.0', share=True, show_error=True)
+    print("   ✓ Gradio app launched successfully")
+except Exception as e:
+    print(f"   ✗ Gradio app launch failed: {e}")
+    traceback.print_exc()
+    exit(1)
+
+print("=== GRADIO APP LAUNCHED SUCCESSFULLY ===")
