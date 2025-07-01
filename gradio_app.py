@@ -1,4 +1,117 @@
 import os
+###
+import traceback
+
+# Debug function to identify import issues
+def debug_imports():
+    print("=== DEBUGGING IMPORTS ===")
+    
+    # Test basic imports
+    try:
+        print("1. Testing basic imports...")
+        import functools
+        import random
+        import gradio as gr
+        import numpy as np
+        import torch
+        print("   ✓ Basic imports successful")
+    except Exception as e:
+        print(f"   ✗ Basic imports failed: {e}")
+        traceback.print_exc()
+        return False
+    
+    # Test custom module imports
+    try:
+        print("2. Testing wd14tagger...")
+        import wd14tagger
+        print("   ✓ wd14tagger import successful")
+    except Exception as e:
+        print(f"   ✗ wd14tagger import failed: {e}")
+        traceback.print_exc()
+        return False
+    
+    try:
+        print("3. Testing memory_management...")
+        import memory_management
+        print("   ✓ memory_management import successful")
+    except Exception as e:
+        print(f"   ✗ memory_management import failed: {e}")
+        traceback.print_exc()
+        return False
+    
+    try:
+        print("4. Testing PIL...")
+        from PIL import Image
+        print("   ✓ PIL import successful")
+    except Exception as e:
+        print(f"   ✗ PIL import failed: {e}")
+        traceback.print_exc()
+        return False
+    
+    try:
+        print("5. Testing diffusers_helper.code_cond...")
+        from diffusers_helper.code_cond import unet_add_coded_conds
+        print("   ✓ diffusers_helper.code_cond import successful")
+    except Exception as e:
+        print(f"   ✗ diffusers_helper.code_cond import failed: {e}")
+        traceback.print_exc()
+        return False
+    
+    try:
+        print("6. Testing diffusers_helper.cat_cond...")
+        from diffusers_helper.cat_cond import unet_add_concat_conds
+        print("   ✓ diffusers_helper.cat_cond import successful")
+    except Exception as e:
+        print(f"   ✗ diffusers_helper.cat_cond import failed: {e}")
+        traceback.print_exc()
+        return False
+    
+    try:
+        print("7. Testing diffusers_helper.k_diffusion...")
+        from diffusers_helper.k_diffusion import KDiffusionSampler
+        print("   ✓ diffusers_helper.k_diffusion import successful")
+    except Exception as e:
+        print(f"   ✗ diffusers_helper.k_diffusion import failed: {e}")
+        traceback.print_exc()
+        return False
+    
+    try:
+        print("8. Testing diffusers...")
+        from diffusers import AutoencoderKL, UNet2DConditionModel
+        from diffusers.models.attention_processor import AttnProcessor2_0
+        print("   ✓ diffusers import successful")
+    except Exception as e:
+        print(f"   ✗ diffusers import failed: {e}")
+        traceback.print_exc()
+        return False
+    
+    try:
+        print("9. Testing transformers...")
+        from transformers import CLIPTextModel, CLIPTokenizer
+        print("   ✓ transformers import successful")
+    except Exception as e:
+        print(f"   ✗ transformers import failed: {e}")
+        traceback.print_exc()
+        return False
+    
+    try:
+        print("10. Testing diffusers_vdm...")
+        from diffusers_vdm.pipeline import LatentVideoDiffusionPipeline
+        from diffusers_vdm.utils import resize_and_center_crop, save_bcthw_as_mp4
+        print("   ✓ diffusers_vdm import successful")
+    except Exception as e:
+        print(f"   ✗ diffusers_vdm import failed: {e}")
+        traceback.print_exc()
+        return False
+    
+    print("=== ALL IMPORTS SUCCESSFUL ===")
+    return True
+
+# Run debug imports
+if not debug_imports():
+    print("Import debugging failed. Exiting.")
+    exit(1)
+###
 
 os.environ['HF_HOME'] = os.path.join(os.path.dirname(__file__), 'hf_download')
 result_dir = os.path.join('./', 'results')

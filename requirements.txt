@@ -2,8 +2,8 @@
 diffusers==0.28.0
 transformers==4.41.1
 accelerate==0.25.0
-torch==2.3.0
-torchvision==0.18.0
+torch
+torchvision
 
 # Gradio and web interface
 gradio==4.31.5
