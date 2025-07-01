@@ -17,6 +17,6 @@ av
 torchvision
 
 huggingface_hub==0.25.0
-gradio_client==0.15.0
+gradio_client==0.16.4
 fastapi==0.110.0
 pydantic==2.6.4
