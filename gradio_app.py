@@ -147,34 +147,97 @@ class ModifiedUNet(UNet2DConditionModel):
         unet_add_coded_conds(unet=m, added_number_count=1)
         return m
 
-
+###
+print("=== DEBUGGING MODEL LOADING ===")
 model_name = 'lllyasviel/paints_undo_single_frame'
-tokenizer = CLIPTokenizer.from_pretrained(model_name, subfolder="tokenizer")
-text_encoder = CLIPTextModel.from_pretrained(model_name, subfolder="text_encoder").to(torch.float16)
-vae = AutoencoderKL.from_pretrained(model_name, subfolder="vae").to(torch.bfloat16)  # bfloat16 vae
-unet = ModifiedUNet.from_pretrained(model_name, subfolder="unet").to(torch.float16)
 
-unet.set_attn_processor(AttnProcessor2_0())
-vae.set_attn_processor(AttnProcessor2_0())
+try:
+    print("1. Loading tokenizer...")
+    tokenizer = CLIPTokenizer.from_pretrained(model_name, subfolder="tokenizer")
+    print("   ✓ Tokenizer loaded successfully")
+except Exception as e:
+    print(f"   ✗ Tokenizer loading failed: {e}")
+    traceback.print_exc()
+    exit(1)
 
-video_pipe = LatentVideoDiffusionPipeline.from_pretrained(
-    'lllyasviel/paints_undo_multi_frame',
-    fp16=True
-)
+try:
+    print("2. Loading text_encoder...")
+    text_encoder = CLIPTextModel.from_pretrained(model_name, subfolder="text_encoder").to(torch.float16)
+    print("   ✓ Text encoder loaded successfully")
+except Exception as e:
+    print(f"   ✗ Text encoder loading failed: {e}")
+    traceback.print_exc()
+    exit(1)
 
-memory_management.unload_all_models([
-    video_pipe.unet, video_pipe.vae, video_pipe.text_encoder, video_pipe.image_projection, video_pipe.image_encoder,
-    unet, vae, text_encoder
-])
+try:
+    print("3. Loading VAE...")
+    vae = AutoencoderKL.from_pretrained(model_name, subfolder="vae").to(torch.bfloat16)
+    print("   ✓ VAE loaded successfully")
+except Exception as e:
+    print(f"   ✗ VAE loading failed: {e}")
+    traceback.print_exc()
+    exit(1)
 
-k_sampler = KDiffusionSampler(
-    unet=unet,
-    timesteps=1000,
-    linear_start=0.00085,
-    linear_end=0.020,
-    linear=True
-)
+try:
+    print("4. Loading UNet...")
+    unet = ModifiedUNet.from_pretrained(model_name, subfolder="unet").to(torch.float16)
+    print("   ✓ UNet loaded successfully")
+except Exception as e:
+    print(f"   ✗ UNet loading failed: {e}")
+    traceback.print_exc()
+    exit(1)
 
+try:
+    print("5. Setting attention processors...")
+    unet.set_attn_processor(AttnProcessor2_0())
+    vae.set_attn_processor(AttnProcessor2_0())
+    print("   ✓ Attention processors set successfully")
+except Exception as e:
+    print(f"   ✗ Setting attention processors failed: {e}")
+    traceback.print_exc()
+    exit(1)
+
+try:
+    print("6. Loading video pipeline...")
+    video_pipe = LatentVideoDiffusionPipeline.from_pretrained(
+        'lllyasviel/paints_undo_multi_frame',
+        fp16=True
+    )
+    print("   ✓ Video pipeline loaded successfully")
+except Exception as e:
+    print(f"   ✗ Video pipeline loading failed: {e}")
+    traceback.print_exc()
+    exit(1)
+
+try:
+    print("7. Unloading models...")
+    memory_management.unload_all_models([
+        video_pipe.unet, video_pipe.vae, video_pipe.text_encoder, video_pipe.image_projection, video_pipe.image_encoder,
+        unet, vae, text_encoder
+    ])
+    print("   ✓ Models unloaded successfully")
+except Exception as e:
+    print(f"   ✗ Model unloading failed: {e}")
+    traceback.print_exc()
+    exit(1)
+
+try:
+    print("8. Creating KDiffusionSampler...")
+    k_sampler = KDiffusionSampler(
+        unet=unet,
+        timesteps=1000,
+        linear_start=0.00085,
+        linear_end=0.020,
+        linear=True
+    )
+    print("   ✓ KDiffusionSampler created successfully")
+except Exception as e:
+    print(f"   ✗ KDiffusionSampler creation failed: {e}")
+    traceback.print_exc()
+    exit(1)
+
+print("=== ALL MODEL LOADING SUCCESSFUL ===")
+###
 
 def find_best_bucket(h, w, options):
     min_metric = float('inf')
