@@ -7,7 +7,7 @@ torchvision==0.18.0
 
 # Gradio and web interface
 gradio==4.31.5
-gradio_client==0.15.0
+gradio_client==0.16.4
 
 # Hugging Face ecosystem
 huggingface_hub==0.25.0
