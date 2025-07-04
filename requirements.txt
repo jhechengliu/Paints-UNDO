@@ -1,7 +1,7 @@
 # Core ML libraries - compatible versions
 diffusers==0.28.0
 transformers==4.41.1
-accelerate
+accelerate==0.30.1
 torch
 torchvision
 
@@ -23,7 +23,7 @@ bitsandbytes==0.43.1
 xformers
 
 # Additional utilities
-peft
+peft==0.10.0
 onnxruntime
 av
 tensorboardX
