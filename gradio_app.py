@@ -153,7 +153,7 @@ model_name = 'lllyasviel/paints_undo_single_frame'
 
 try:
     print("1. Loading tokenizer...")
-    tokenizer = CLIPTokenizer.from_pretrained(model_name, subfolder="tokenizer")
+tokenizer = CLIPTokenizer.from_pretrained(model_name, subfolder="tokenizer")
     print("   ✓ Tokenizer loaded successfully")
 except Exception as e:
     print(f"   ✗ Tokenizer loading failed: {e}")
@@ -162,7 +162,7 @@ except Exception as e:
 
 try:
     print("2. Loading text_encoder...")
-    text_encoder = CLIPTextModel.from_pretrained(model_name, subfolder="text_encoder").to(torch.float16)
+text_encoder = CLIPTextModel.from_pretrained(model_name, subfolder="text_encoder").to(torch.float16)
     print("   ✓ Text encoder loaded successfully")
 except Exception as e:
     print(f"   ✗ Text encoder loading failed: {e}")
@@ -180,7 +180,7 @@ except Exception as e:
 
 try:
     print("4. Loading UNet...")
-    unet = ModifiedUNet.from_pretrained(model_name, subfolder="unet").to(torch.float16)
+unet = ModifiedUNet.from_pretrained(model_name, subfolder="unet").to(torch.float16)
     print("   ✓ UNet loaded successfully")
 except Exception as e:
     print(f"   ✗ UNet loading failed: {e}")
@@ -189,8 +189,8 @@ except Exception as e:
 
 try:
     print("5. Setting attention processors...")
-    unet.set_attn_processor(AttnProcessor2_0())
-    vae.set_attn_processor(AttnProcessor2_0())
+unet.set_attn_processor(AttnProcessor2_0())
+vae.set_attn_processor(AttnProcessor2_0())
     print("   ✓ Attention processors set successfully")
 except Exception as e:
     print(f"   ✗ Setting attention processors failed: {e}")
@@ -199,10 +199,10 @@ except Exception as e:
 
 try:
     print("6. Loading video pipeline...")
-    video_pipe = LatentVideoDiffusionPipeline.from_pretrained(
-        'lllyasviel/paints_undo_multi_frame',
-        fp16=True
-    )
+video_pipe = LatentVideoDiffusionPipeline.from_pretrained(
+    'lllyasviel/paints_undo_multi_frame',
+    fp16=True
+)
     print("   ✓ Video pipeline loaded successfully")
 except Exception as e:
     print(f"   ✗ Video pipeline loading failed: {e}")
@@ -211,10 +211,10 @@ except Exception as e:
 
 try:
     print("7. Unloading models...")
-    memory_management.unload_all_models([
-        video_pipe.unet, video_pipe.vae, video_pipe.text_encoder, video_pipe.image_projection, video_pipe.image_encoder,
-        unet, vae, text_encoder
-    ])
+memory_management.unload_all_models([
+    video_pipe.unet, video_pipe.vae, video_pipe.text_encoder, video_pipe.image_projection, video_pipe.image_encoder,
+    unet, vae, text_encoder
+])
     print("   ✓ Models unloaded successfully")
 except Exception as e:
     print(f"   ✗ Model unloading failed: {e}")
@@ -223,13 +223,13 @@ except Exception as e:
 
 try:
     print("8. Creating KDiffusionSampler...")
-    k_sampler = KDiffusionSampler(
-        unet=unet,
-        timesteps=1000,
-        linear_start=0.00085,
-        linear_end=0.020,
-        linear=True
-    )
+k_sampler = KDiffusionSampler(
+    unet=unet,
+    timesteps=1000,
+    linear_start=0.00085,
+    linear_end=0.020,
+    linear=True
+)
     print("   ✓ KDiffusionSampler created successfully")
 except Exception as e:
     print(f"   ✗ KDiffusionSampler creation failed: {e}")

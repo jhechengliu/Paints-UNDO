@@ -1,7 +1,7 @@
 # Core ML libraries - compatible versions
 diffusers==0.28.0
 transformers==4.41.1
-accelerate==0.25.0
+accelerate
 torch
 torchvision
 
