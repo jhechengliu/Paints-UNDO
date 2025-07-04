@@ -1,117 +1,4 @@
 import os
-###
-import traceback
-
-# Debug function to identify import issues
-def debug_imports():
-    print("=== DEBUGGING IMPORTS ===")
-    
-    # Test basic imports
-    try:
-        print("1. Testing basic imports...")
-        import functools
-        import random
-        import gradio as gr
-        import numpy as np
-        import torch
-        print("   ✓ Basic imports successful")
-    except Exception as e:
-        print(f"   ✗ Basic imports failed: {e}")
-        traceback.print_exc()
-        return False
-    
-    # Test custom module imports
-    try:
-        print("2. Testing wd14tagger...")
-        import wd14tagger
-        print("   ✓ wd14tagger import successful")
-    except Exception as e:
-        print(f"   ✗ wd14tagger import failed: {e}")
-        traceback.print_exc()
-        return False
-    
-    try:
-        print("3. Testing memory_management...")
-        import memory_management
-        print("   ✓ memory_management import successful")
-    except Exception as e:
-        print(f"   ✗ memory_management import failed: {e}")
-        traceback.print_exc()
-        return False
-    
-    try:
-        print("4. Testing PIL...")
-        from PIL import Image
-        print("   ✓ PIL import successful")
-    except Exception as e:
-        print(f"   ✗ PIL import failed: {e}")
-        traceback.print_exc()
-        return False
-    
-    try:
-        print("5. Testing diffusers_helper.code_cond...")
-        from diffusers_helper.code_cond import unet_add_coded_conds
-        print("   ✓ diffusers_helper.code_cond import successful")
-    except Exception as e:
-        print(f"   ✗ diffusers_helper.code_cond import failed: {e}")
-        traceback.print_exc()
-        return False
-    
-    try:
-        print("6. Testing diffusers_helper.cat_cond...")
-        from diffusers_helper.cat_cond import unet_add_concat_conds
-        print("   ✓ diffusers_helper.cat_cond import successful")
-    except Exception as e:
-        print(f"   ✗ diffusers_helper.cat_cond import failed: {e}")
-        traceback.print_exc()
-        return False
-    
-    try:
-        print("7. Testing diffusers_helper.k_diffusion...")
-        from diffusers_helper.k_diffusion import KDiffusionSampler
-        print("   ✓ diffusers_helper.k_diffusion import successful")
-    except Exception as e:
-        print(f"   ✗ diffusers_helper.k_diffusion import failed: {e}")
-        traceback.print_exc()
-        return False
-    
-    try:
-        print("8. Testing diffusers...")
-        from diffusers import AutoencoderKL, UNet2DConditionModel
-        from diffusers.models.attention_processor import AttnProcessor2_0
-        print("   ✓ diffusers import successful")
-    except Exception as e:
-        print(f"   ✗ diffusers import failed: {e}")
-        traceback.print_exc()
-        return False
-    
-    try:
-        print("9. Testing transformers...")
-        from transformers import CLIPTextModel, CLIPTokenizer
-        print("   ✓ transformers import successful")
-    except Exception as e:
-        print(f"   ✗ transformers import failed: {e}")
-        traceback.print_exc()
-        return False
-    
-    try:
-        print("10. Testing diffusers_vdm...")
-        from diffusers_vdm.pipeline import LatentVideoDiffusionPipeline
-        from diffusers_vdm.utils import resize_and_center_crop, save_bcthw_as_mp4
-        print("   ✓ diffusers_vdm import successful")
-    except Exception as e:
-        print(f"   ✗ diffusers_vdm import failed: {e}")
-        traceback.print_exc()
-        return False
-    
-    print("=== ALL IMPORTS SUCCESSFUL ===")
-    return True
-
-# Run debug imports
-if not debug_imports():
-    print("Import debugging failed. Exiting.")
-    exit(1)
-###
 
 os.environ['HF_HOME'] = os.path.join(os.path.dirname(__file__), 'hf_download')
 result_dir = os.path.join('./', 'results')
@@ -147,82 +34,26 @@ class ModifiedUNet(UNet2DConditionModel):
         unet_add_coded_conds(unet=m, added_number_count=1)
         return m
 
-###
-print("=== DEBUGGING MODEL LOADING ===")
+
 model_name = 'lllyasviel/paints_undo_single_frame'
-
-try:
-    print("1. Loading tokenizer...")
 tokenizer = CLIPTokenizer.from_pretrained(model_name, subfolder="tokenizer")
-    print("   ✓ Tokenizer loaded successfully")
-except Exception as e:
-    print(f"   ✗ Tokenizer loading failed: {e}")
-    traceback.print_exc()
-    exit(1)
-
-try:
-    print("2. Loading text_encoder...")
 text_encoder = CLIPTextModel.from_pretrained(model_name, subfolder="text_encoder").to(torch.float16)
-    print("   ✓ Text encoder loaded successfully")
-except Exception as e:
-    print(f"   ✗ Text encoder loading failed: {e}")
-    traceback.print_exc()
-    exit(1)
-
-try:
-    print("3. Loading VAE...")
-    vae = AutoencoderKL.from_pretrained(model_name, subfolder="vae").to(torch.bfloat16)
-    print("   ✓ VAE loaded successfully")
-except Exception as e:
-    print(f"   ✗ VAE loading failed: {e}")
-    traceback.print_exc()
-    exit(1)
-
-try:
-    print("4. Loading UNet...")
+vae = AutoencoderKL.from_pretrained(model_name, subfolder="vae").to(torch.bfloat16)  # bfloat16 vae
 unet = ModifiedUNet.from_pretrained(model_name, subfolder="unet").to(torch.float16)
-    print("   ✓ UNet loaded successfully")
-except Exception as e:
-    print(f"   ✗ UNet loading failed: {e}")
-    traceback.print_exc()
-    exit(1)
 
-try:
-    print("5. Setting attention processors...")
 unet.set_attn_processor(AttnProcessor2_0())
 vae.set_attn_processor(AttnProcessor2_0())
-    print("   ✓ Attention processors set successfully")
-except Exception as e:
-    print(f"   ✗ Setting attention processors failed: {e}")
-    traceback.print_exc()
-    exit(1)
 
-try:
-    print("6. Loading video pipeline...")
 video_pipe = LatentVideoDiffusionPipeline.from_pretrained(
     'lllyasviel/paints_undo_multi_frame',
     fp16=True
 )
-    print("   ✓ Video pipeline loaded successfully")
-except Exception as e:
-    print(f"   ✗ Video pipeline loading failed: {e}")
-    traceback.print_exc()
-    exit(1)
 
-try:
-    print("7. Unloading models...")
 memory_management.unload_all_models([
     video_pipe.unet, video_pipe.vae, video_pipe.text_encoder, video_pipe.image_projection, video_pipe.image_encoder,
     unet, vae, text_encoder
 ])
-    print("   ✓ Models unloaded successfully")
-except Exception as e:
-    print(f"   ✗ Model unloading failed: {e}")
-    traceback.print_exc()
-    exit(1)
 
-try:
-    print("8. Creating KDiffusionSampler...")
 k_sampler = KDiffusionSampler(
     unet=unet,
     timesteps=1000,
@@ -230,14 +61,7 @@ k_sampler = KDiffusionSampler(
     linear_end=0.020,
     linear=True
 )
-    print("   ✓ KDiffusionSampler created successfully")
-except Exception as e:
-    print(f"   ✗ KDiffusionSampler creation failed: {e}")
-    traceback.print_exc()
-    exit(1)
 
-print("=== ALL MODEL LOADING SUCCESSFUL ===")
-###
 
 def find_best_bucket(h, w, options):
     min_metric = float('inf')
@@ -497,23 +321,4 @@ with block:
         examples_per_page=1024
     )
 
-print("=== DEBUGGING GRADIO APP CREATION ===")
-try:
-    print("1. Creating Gradio block...")
-    demo = block.queue()
-    print("   ✓ Gradio block created successfully")
-except Exception as e:
-    print(f"   ✗ Gradio block creation failed: {e}")
-    traceback.print_exc()
-    exit(1)
-
-try:
-    print("2. Launching Gradio app...")
-    demo.launch(server_name='0.0.0.0', share=True, show_error=True)
-    print("   ✓ Gradio app launched successfully")
-except Exception as e:
-    print(f"   ✗ Gradio app launch failed: {e}")
-    traceback.print_exc()
-    exit(1)
-
-print("=== GRADIO APP LAUNCHED SUCCESSFULLY ===")
+block.queue().launch(server_name='0.0.0.0', share=True)
